@@ -1,0 +1,21 @@
+allprojects {
+    tasks.register("hello") {
+        doLast { task ->
+            println "I'm $task.project.name"
+        }
+    }
+}
+subprojects {
+    tasks.named("hello") {
+        doLast {
+            println "- I depend on water"
+        }
+    }
+}
+configure(subprojects.findAll {it.name != 'tropicalFish'}) {
+    tasks.named("hello") {
+        doLast {
+            println '- I love to spend time in the arctic waters.'
+        }
+    }
+}

@@ -1,0 +1,120 @@
+import junit.framework.AssertionFailedError
+import org.custommonkey.xmlunit.Diff
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier
+import org.custommonkey.xmlunit.XMLAssert
+import org.junit.ComparisonFailure
+import java.util.regex.Pattern
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'xmlunit:xmlunit:1.3', 'junit:junit:4.8.1'
+    }
+}
+
+defaultTasks 'eclipse', 'cleanEclipse'
+
+allprojects {
+    apply plugin: 'eclipse-wtp'
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    group = 'org.gradle'
+    version = '1.0'
+}
+
+allprojects {
+    afterEvaluate { p ->
+        configure(p) {
+            eclipseProject.doLast {
+                compareXmlWithIgnoringOrder(getExpectedXml(file("$rootDir/../expectedFiles/${project.name}Project.xml")),
+                        getActualXml(file(".project")))
+            }
+
+            if (p.hasProperty('eclipseClasspath')) {
+                eclipse {
+                    classpath {
+                        downloadJavadoc = true
+                    }
+                }
+                eclipseClasspath {
+                    doLast {
+                        compareXmlWithIgnoringOrder(getExpectedXml(file("$rootDir/../expectedFiles/${project.name}Classpath.xml")),
+                                getActualXml(file(".classpath")))
+                    }
+                }
+            }
+
+            if (p.hasProperty('eclipseJdt')) {
+                eclipseJdt {
+                    doLast {
+                        compareProperties(getExpectedXml(file("$rootDir/../expectedFiles/${project.name}Jdt.properties")),
+                                getActualXml(file(".settings/org.eclipse.jdt.core.prefs")))
+                    }
+                }
+            }
+
+            if (p.hasProperty('eclipseWtpComponent')) {
+                eclipseWtpComponent {
+                    doLast {
+                        compareXmlWithIgnoringOrder(getExpectedXml(file("$rootDir/../expectedFiles/${project.name}WtpComponent.xml")),
+                                getActualXml(file(".settings/org.eclipse.wst.common.component")))
+                    }
+                }
+            }
+            if (p.hasProperty('eclipseWtpFacet')) {
+                eclipseWtpFacet {
+                    doLast {
+                        compareXmlWithIgnoringOrder(getExpectedXml(file("$rootDir/../expectedFiles/${project.name}WtpFacet.xml")),
+                                getActualXml(file(".settings/org.eclipse.wst.common.project.facet.core.xml")))
+                    }
+                }
+            }
+            cleanEclipse.doLast {
+                assert !file(".classpath").exists()
+                assert !file(".project").exists()
+                assert !file('.settings').exists() || file('.settings').listFiles().length == 0
+            }
+        }
+    }
+}
+
+void compareProperties(String expectedProperties, String actualProperties) {
+    Properties expected = new Properties()
+    expected.load(new ByteArrayInputStream(expectedProperties.bytes))
+    Properties actual = new Properties()
+    actual.load(new ByteArrayInputStream(actualProperties.bytes))
+    assert expected == actual
+}
+
+void compareXmlWithIgnoringOrder(String expectedXml, String actualXml) {
+    Diff diff = new Diff(expectedXml, actualXml)
+    diff.overrideElementQualifier(new ElementNameAndAttributeQualifier())
+    try {
+        XMLAssert.assertXMLEqual(diff, true)
+    } catch (AssertionFailedError error) {
+        println "EXPECTED:\n${expectedXml}"
+        println "ACTUAL:\n${actualXml}"
+        throw new ComparisonFailure("Unexpected content for generated file: ${error.message}", expectedXml, actualXml).initCause(error)
+    }
+}
+
+String getExpectedXml(File file) {
+    return file.text
+}
+
+String getActualXml(File file) {
+    def homeDir = gradle.gradleUserHomeDir.absolutePath.replace(File.separator, '/')
+    def pattern = Pattern.compile(Pattern.quote(homeDir) + "/caches/artifacts-\\d+/artifacts/[a-z0-9]+/")
+    def text = file.text.replaceAll(pattern, "@CACHE_DIR@/@REPO@/")
+    pattern = Pattern.compile("GRADLE_USER_HOME/artifacts-\\d+/artifacts/[a-z0-9]+/")
+    text = text.replaceAll(pattern, "GRADLE_USER_HOME/@REPO@/")
+    return text
+}
+

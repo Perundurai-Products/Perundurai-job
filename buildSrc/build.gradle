@@ -1,0 +1,48 @@
+/*
+ * Copyright 2010 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'code-quality'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenRepo(url: 'http://repo.gradle.org/gradle/libs')
+    mavenRepo(url: 'http://snapshots.repository.codehaus.org/')
+    mavenRepo(url: 'http://m2repo.spockframework.org/snapshots/')
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'com.google.collections:google-collections:1.0@jar'
+    compile 'commons-lang:commons-lang:2.6@jar'
+    groovy localGroovy()
+    testCompile 'junit:junit:4.8.2@jar'
+    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8-SNAPSHOT@jar', 'cglib:cglib-nodep:2.2', 'org.objenesis:objenesis:1.2'
+}
+
+configurations {
+	all {
+		resolutionStrategy {
+            //we cannot use 'hours' for now due to java 1.5 problem
+			cacheDynamicVersionsFor 24*60*60, 'seconds'
+			cacheChangingModulesFor 24*60*60, 'seconds'
+		}
+	}
+}
+
+apply from: '../gradle/compile.gradle'
+apply from: '../gradle/codeQuality.gradle'

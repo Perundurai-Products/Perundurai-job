@@ -1,0 +1,12 @@
+dependencies {
+    groovy libraries.groovy
+
+    integTestCompile libraries.slf4j_api
+    integTestCompile libraries.commons_lang
+}
+
+useTestFixtures()
+
+integTestTasks.all {
+    jvmArgs '-XX:MaxPermSize=256m'
+}

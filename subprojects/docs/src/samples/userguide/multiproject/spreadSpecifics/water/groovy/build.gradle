@@ -1,0 +1,14 @@
+allprojects {
+    tasks.register("hello") {
+        doLast { task ->
+            println "I'm $task.project.name"
+        }
+    }
+}
+subprojects {
+    tasks.named("hello") {
+        doLast {
+            println "- I depend on water"
+        }
+    }
+}

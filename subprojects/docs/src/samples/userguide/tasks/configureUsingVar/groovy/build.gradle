@@ -1,0 +1,10 @@
+tasks.register("myCopy", Copy)
+
+// tag::configure[]
+TaskProvider<Copy> myCopy = tasks.named("myCopy")
+myCopy.configure {
+    from 'resources'
+    into 'target'
+    include('**/*.txt', '**/*.xml', '**/*.properties')
+}
+// end::configure[]

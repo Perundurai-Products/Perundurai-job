@@ -1,0 +1,20 @@
+def hello = tasks.register("hello") {
+    doLast {
+        println 'Hello Earth'
+    }
+}
+hello.configure {
+    doFirst {
+        println 'Hello Venus'
+    }
+}
+hello.configure {
+    doLast {
+        println 'Hello Mars'
+    }
+}
+hello.configure {
+    doLast {
+        println 'Hello Jupiter'
+    }
+}

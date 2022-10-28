@@ -1,0 +1,15 @@
+
+> Task :compile
+compiling source
+
+> Task :compileTest
+compiling unit tests
+
+> Task :test
+running unit tests
+
+> Task :dist
+building the distribution
+
+BUILD SUCCESSFUL in 0s
+4 actionable tasks: 4 executed

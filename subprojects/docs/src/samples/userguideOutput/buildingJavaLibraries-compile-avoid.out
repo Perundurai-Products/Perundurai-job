@@ -1,0 +1,17 @@
+
+> Task :compileMainJarMainJava
+
+> Task :processMainJarMainResources UP-TO-DATE
+
+> Task :mainApiJar
+
+> Task :compileClientJarClientJava UP-TO-DATE
+
+> Task :clientApiJar UP-TO-DATE
+
+> Task :createClientJar UP-TO-DATE
+
+> Task :clientJar UP-TO-DATE
+
+BUILD SUCCESSFUL in 0s
+6 actionable tasks: 2 executed, 4 up-to-date

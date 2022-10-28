@@ -1,0 +1,31 @@
+
+> Task :core:compileMainJava5JarMainJava
+
+> Task :core:processMainJava5JarMainResources
+
+> Task :core:createMainJava5Jar
+
+> Task :core:mainJava5ApiJar
+
+> Task :core:mainJava5Jar
+
+> Task :core:compileMainJava6JarMainJava
+
+> Task :core:compileMainJava6JarMainJava6JarJava
+
+> Task :core:processMainJava6JarMainResources
+
+> Task :core:createMainJava6Jar
+
+> Task :core:mainJava6ApiJar
+
+> Task :core:mainJava6Jar
+
+> Task :core:assemble
+
+> Task :core:check UP-TO-DATE
+
+> Task :core:build
+
+BUILD SUCCESSFUL in 0s
+9 actionable tasks: 9 executed

@@ -1,0 +1,74 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.gradle.tooling.internal.provider.runner;
+
+import org.gradle.initialization.BuildEventConsumer;
+import org.gradle.internal.operations.BuildOperationDescriptor;
+import org.gradle.internal.operations.BuildOperationListener;
+import org.gradle.internal.operations.OperationFinishEvent;
+import org.gradle.internal.operations.OperationIdentifier;
+import org.gradle.internal.operations.OperationProgressEvent;
+import org.gradle.internal.operations.OperationStartEvent;
+import org.gradle.profile.ProfileListener;
+import org.gradle.tooling.internal.provider.BuildClientSubscriptions;
+import org.gradle.tooling.internal.provider.SubscribableBuildActionRunnerRegistration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
+
+public class ToolingApiSubscribableBuildActionRunnerRegistration implements SubscribableBuildActionRunnerRegistration {
+    @Override
+    public Iterable<BuildOperationListener> createBuildOperationListeners(BuildClientSubscriptions clientSubscriptions, BuildEventConsumer consumer) {
+        List<BuildOperationListener> listeners = new ArrayList<BuildOperationListener>();
+        if (clientSubscriptions.isSendTestProgressEvents()) {
+            listeners.add(new ClientForwardingTestOperationListener(consumer, clientSubscriptions));
+        }
+        if (clientSubscriptions.isSendBuildProgressEvents() || clientSubscriptions.isSendTaskProgressEvents()) {
+            BuildOperationListener buildListener = NO_OP;
+            if (clientSubscriptions.isSendBuildProgressEvents()) {
+                buildListener = new TestIgnoringBuildOperationListener(new ClientForwardingBuildOperationListener(consumer));
+            }
+            listeners.add(new ClientForwardingTaskOperationListener(consumer, clientSubscriptions, buildListener));
+        }
+        return listeners;
+    }
+
+    @Override
+    public Iterable<ProfileListener> createProfileListeners(BuildClientSubscriptions clientSubscriptions, BuildEventConsumer consumer) {
+        if (clientSubscriptions.isPublishBuildProfileEvent()) {
+            return singleton(new ClientForwardingBuildProfileListener(consumer));
+        }
+        return emptyList();
+    }
+
+    private static final BuildOperationListener NO_OP = new BuildOperationListener() {
+        @Override
+        public void started(BuildOperationDescriptor buildOperation, OperationStartEvent startEvent) {
+        }
+
+        @Override
+        public void progress(OperationIdentifier buildOperationId, OperationProgressEvent progressEvent) {
+        }
+
+        @Override
+        public void finished(BuildOperationDescriptor buildOperation, OperationFinishEvent finishEvent) {
+        }
+    };
+}

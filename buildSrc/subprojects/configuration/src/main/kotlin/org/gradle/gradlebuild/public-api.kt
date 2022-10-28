@@ -1,0 +1,71 @@
+package org.gradle.gradlebuild
+
+object PublicApi {
+    /**
+     * Patterns for inclusion.
+     */
+    val includes = listOf(
+
+        "org/gradle/api/internal/DynamicObjectAware.class",
+        "org/gradle/api/internal/IConventionAware.class",
+        "org/gradle/api/internal/TaskInternal.class",
+        "org/gradle/language/base/internal/LanguageSourceSetInternal.class",
+        "org/gradle/platform/base/component/internal/AbstractComponentSpec.class",
+        "org/gradle/plugins/ide/internal/generator/AbstractPersistableConfigurationObject.class",
+        "org/gradle/plugins/ide/internal/generator/generator/PersistableConfigurationObject.class",
+        "org/gradle/platform/base/internal/ComponentSpecInternal.class",
+        "groovy/util/AntBuilder.class",
+        "org/gradle/api/internal/AbstractBuildableComponentSpec.class",
+        "org/gradle/api/internal/AbstractTask.class",
+        "org/gradle/api/internal/ConventionTask.class",
+        "org/gradle/api/internal/artifacts/publish/AbstractPublishArtifact.class",
+        "org/gradle/api/internal/file/copy/CopySpecSource.class",
+        "org/gradle/api/internal/rules/NamedDomainObjectFactoryRegistry.class",
+        "org/gradle/api/plugins/quality/internal/AbstractCodeQualityPlugin.class",
+        "org/gradle/api/publication/maven/internal/MavenPomMetaInfoProvider.class",
+        "org/gradle/internal/exceptions/DefaultMultiCauseException.class",
+        "org/gradle/jvm/internal/WithDependencies.class",
+        "org/gradle/language/base/internal/AbstractLanguageSourceSet.class",
+        "org/gradle/platform/base/component/internal/DefaultComponentSpec.class",
+        "org/gradle/platform/base/internal/BinarySpecInternal.class",
+        "org/gradle/plugins/ide/internal/IdePlugin.class",
+        "org/gradle/plugins/ide/internal/generator/PropertiesPersistableConfigurationObject.class",
+        "org/gradle/plugins/ide/internal/generator/XmlPersistableConfigurationObject.class",
+        "org/gradle/util/Configurable.class",
+
+        "org/gradle/*",
+        "org/gradle/api/**",
+        "org/gradle/authentication/**",
+        "org/gradle/buildinit/**",
+        "org/gradle/caching/**",
+        "org/gradle/concurrent/**",
+        "org/gradle/deployment/**",
+        "org/gradle/external/javadoc/**",
+        "org/gradle/ide/**",
+        "org/gradle/includedbuild/**",
+        "org/gradle/ivy/**",
+        "org/gradle/jvm/**",
+        "org/gradle/language/**",
+        "org/gradle/maven/**",
+        "org/gradle/nativeplatform/**",
+        "org/gradle/normalization/**",
+        "org/gradle/platform/**",
+        "org/gradle/play/**",
+        "org/gradle/plugin/devel/**",
+        "org/gradle/plugin/repository/*",
+        "org/gradle/plugin/use/*",
+        "org/gradle/plugin/management/*",
+        "org/gradle/plugins/**",
+        "org/gradle/process/**",
+        "org/gradle/testfixtures/**",
+        "org/gradle/testing/jacoco/**",
+        "org/gradle/tooling/**",
+        "org/gradle/swiftpm/**",
+        "org/gradle/model/**",
+        "org/gradle/testkit/**",
+        "org/gradle/testing/**",
+        "org/gradle/vcs/**",
+        "org/gradle/workers/**")
+
+    val excludes = listOf("**/internal/**")
+}

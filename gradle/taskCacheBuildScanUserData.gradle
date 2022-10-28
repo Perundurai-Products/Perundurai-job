@@ -1,0 +1,59 @@
+/*
+ * Copyright 2017 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import org.gradle.caching.internal.DefaultBuildCacheKeyBuilder
+import org.gradle.internal.classloader.ClassLoaderHierarchyHasher
+
+pluginManager.withPlugin("com.gradle.build-scan") {
+    if (gradle.startParameter.taskOutputCacheEnabled) {
+
+        ext.tasksToInvestigateForCache = project.hasProperty('cache.investigate.tasks') ? project.getProperty('cache.investigate.tasks').split(',') : [
+            'compileJava',
+            ':jar'
+        ]
+
+        project.buildScan.buildFinished(new Action() {
+            public void execute(result) {
+                for (Task task : (allprojects*.tasks).flatten()) {
+                    if (tasksToInvestigateForCache.any { task.getPath().contains(it) }) {
+                        def buildScan = task.project.buildScan
+                        task.inputs.properties.each { name, value ->
+                            buildScan.value "${task.path}-input-${name}", String.valueOf(value)
+                        }
+                        def fileProperties = task.inputs.fileProperties
+                        fileProperties.each { inputProperty ->
+                            def name = inputProperty.propertyName
+                            def snapshotter = gradle.services.get(inputProperty.snapshotter)
+                            def snapshot = snapshotter.snapshot(inputProperty.getPropertyFiles(), inputProperty.getCompareStrategy(), inputProperty.getSnapshotNormalizationStrategy())
+                            def prefix = "${task.path}-input-${name}"
+                            buildScan.value "${prefix}-hash", hashKey(snapshot)
+                        }
+                        def hasher = gradle.services.get(ClassLoaderHierarchyHasher)
+                        buildScan.value("${task.path}-classloader-hash", "" + hasher.getClassLoaderHash(task.getClass().getClassLoader()))
+                        int actionIndex = 0
+                        task.actionClassLoaders.each { buildScan.value("${task.path}-action-classloader-${actionIndex++}-hash", "" + hasher.getClassLoaderHash(it)) }
+                    }
+                }
+            }
+
+            private static String hashKey(some) {
+                def builder = new DefaultBuildCacheKeyBuilder()
+                some.appendToCacheKey(builder)
+                builder.build().getHashCode()
+            }
+        })
+    }
+}

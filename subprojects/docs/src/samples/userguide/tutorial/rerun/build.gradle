@@ -1,0 +1,8 @@
+apply plugin: "base"
+
+tasks.register("doIt", Copy) {
+    from projectDir, {
+        include "README.md"
+    }
+    into buildDir
+}

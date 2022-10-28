@@ -1,0 +1,28 @@
+// tag::use-plugin[]
+plugins {
+    id 'announce'
+}
+// end::use-plugin[]
+
+// tag::announce-plugin-conf[]
+announce {
+  username = 'myId'
+  password = 'myPassword'
+}
+// end::announce-plugin-conf[]
+
+
+// tag::announce-usage[]
+def helloWorld = tasks.register("helloWorld") {
+    doLast {
+        println "Hello, world!"
+    }
+}
+
+helloWorld.configure {
+    doLast {
+        announce.announce("helloWorld completed!", "twitter")
+        announce.announce("helloWorld completed!", "local")
+    }
+}
+// end::announce-usage[]

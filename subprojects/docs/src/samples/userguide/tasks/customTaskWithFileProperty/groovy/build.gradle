@@ -1,0 +1,34 @@
+// tag::all[]
+// tag::task[]
+class GreetingToFileTask extends DefaultTask {
+
+    def destination
+
+    File getDestination() {
+        project.file(destination)
+    }
+
+    @TaskAction
+    def greet() {
+        def file = getDestination()
+        file.parentFile.mkdirs()
+        file.write 'Hello!'
+    }
+}
+// end::task[]
+
+// tag::config[]
+tasks.register("greet", GreetingToFileTask) {
+    destination = { project.greetingFile }
+}
+
+tasks.register("sayGreeting") {
+    dependsOn greet
+    doLast {
+        println file(greetingFile).text
+    }
+}
+
+ext.greetingFile = "$buildDir/hello.txt"
+// end::config[]
+// end::all[]

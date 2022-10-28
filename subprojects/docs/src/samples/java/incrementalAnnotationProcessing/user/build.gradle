@@ -1,0 +1,12 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    compileOnly project(":library")
+    annotationProcessor project(":processor")
+}
+
+tasks.named("compileJava") {
+    options.incremental = true
+}

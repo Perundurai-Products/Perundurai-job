@@ -1,0 +1,18 @@
+tasks.register("taskX") {
+    doLast {
+        println 'taskX'
+    }
+}
+tasks.register("taskY") {
+    doLast {
+        println 'taskY'
+    }
+}
+tasks.register("taskZ") {
+    doLast {
+        println 'taskZ'
+    }
+}
+tasks.named("taskX") { dependsOn taskY }
+tasks.named("taskY") { dependsOn taskZ }
+tasks.named("taskZ") { shouldRunAfter taskX }

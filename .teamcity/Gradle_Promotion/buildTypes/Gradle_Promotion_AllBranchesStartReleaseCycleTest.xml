@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="59823634-f79d-4c11-bbca-782957a7d65c" xsi:noNamespaceSchemaLocation="http://www.jetbrains.com/teamcity/schemas/2018.1/project-config.xsd">
+  <name>All branches - Start Release Cycle Test</name>
+  <description>Test for Start Release Cycle pipeline</description>
+  <settings>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_29" name="PromoteTest" type="gradle-runner">
+        <parameters>
+          <param name="teamcity.step.mode" value="default" />
+          <param name="teamcity.tool.jacoco" value="%teamcity.tool.jacoco.DEFAULT%" />
+          <param name="ui.gradleRunner.additional.gradle.cmd.params" value="-PconfirmationCode=startCycle -Igradle/buildScanInit.gradle -PtestRun=1" />
+          <param name="ui.gradleRunner.gradle.tasks.names" value="clean promoteStartReleaseCycle" />
+          <param name="ui.gradleRunner.gradle.wrapper.useWrapper" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="Gradle_Promotion_GradlePromotionBranches" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers />
+    <cleanup />
+  </settings>
+</build-type>
+
